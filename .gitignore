@@ -1,0 +1,36 @@
+# ── Secrets ───────────────────────────────────────────────────────────
+.env
+# .env.example é intencional — serve de template, não contém segredos
+
+# ── Python ────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.claude
+
+.env.example
+# ── Raiz legada (monolito substituído pelos microserviços) ─────────────
+/requirements.txt
+/Dockerfile
+/app/
+
+# ── Node / Frontend ───────────────────────────────────────────────────
+node_modules/
+dist/
+.nuxt/
+*.log
+npm-debug.log*
+
+# ── Docker ────────────────────────────────────────────────────────────
+postgres_data/
+
+# ── SO ────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini

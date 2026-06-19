@@ -1,0 +1,75 @@
+services:
+  # ── Public entry point ────────────────────────────────────────────────
+  gateway:
+    build: ./services/gateway
+    container_name: portfolio_gateway
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      auth-service:
+        condition: service_started
+      blog-service:
+        condition: service_started
+    restart: unless-stopped
+
+  # ── Internal services (not exposed to host) ───────────────────────────
+  auth-service:
+    build: ./services/auth-service
+    container_name: portfolio_auth
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  blog-service:
+    build: ./services/blog-service
+    container_name: portfolio_blog
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/uploads/certificates
+    restart: unless-stopped
+
+  # ── Frontend ──────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    container_name: portfolio_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      # Dentro do container o proxy do Vite precisa usar o nome do serviço
+      # Docker, não localhost (que apontaria para o próprio container).
+      # VITE_API_URL no .env (http://localhost:8000) serve para rodar fora do Docker.
+      - VITE_API_URL=http://gateway:8000
+    restart: unless-stopped
+
+  # ── Database ──────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: portfolio_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  uploads_data:
