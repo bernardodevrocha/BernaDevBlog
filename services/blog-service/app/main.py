@@ -15,3 +15,8 @@ app = FastAPI(title="Blog Service", docs_url=None, redoc_url=None, lifespan=life
 app.include_router(posts.router)
 app.include_router(tags.router)
 app.include_router(certificates.router)
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
