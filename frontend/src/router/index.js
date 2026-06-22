@@ -10,6 +10,7 @@ const routes = [
       { path: 'blog', name: 'blog', component: () => import('@/views/BlogView.vue') },
       { path: 'blog/:slug', name: 'post', component: () => import('@/views/PostDetailView.vue') },
       { path: 'certificados', name: 'certificates', component: () => import('@/views/CertificatesView.vue') },
+      { path: 'como-foi-feito', name: 'how-it-was-built', component: () => import('@/views/HowItWasBuiltView.vue') },
       { path: 'login', name: 'login', component: () => import('@/views/LoginView.vue') },
     ],
   },
@@ -34,14 +35,17 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  if (to.meta.requiresAuth) {
-    const auth = useAuthStore()
-    if (auth.loading) await auth.fetchMe()
-    if (!auth.user) return { name: 'login', query: { redirect: to.fullPath } }
+  const auth = useAuthStore()
+
+  // Validate session once per app lifecycle (cookie → /me)
+  if (!auth.initialized) await auth.fetchMe()
+
+  if (to.meta.requiresAuth && !auth.user) {
+    return { name: 'login', query: { redirect: to.fullPath } }
   }
-  if (to.name === 'login') {
-    const auth = useAuthStore()
-    if (!auth.loading && auth.user) return { name: 'admin' }
+
+  if (to.name === 'login' && auth.user) {
+    return { name: 'admin' }
   }
 })
 

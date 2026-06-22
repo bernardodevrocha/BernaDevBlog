@@ -255,7 +255,7 @@ onUnmounted(() => {
 .cert-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(99, 102, 241, 0.75);
+  background: rgba(107, 114, 128, 0.82);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -318,9 +318,9 @@ onUnmounted(() => {
 }
 
 .badge-pdf {
-  background: rgba(99, 102, 241, 0.1);
+  background: var(--color-accent-muted);
   color: var(--color-accent-hover);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  border: 1px solid var(--color-accent-muted-border);
 }
 
 .badge-img {

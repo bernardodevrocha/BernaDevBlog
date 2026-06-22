@@ -4,9 +4,12 @@ import http from '@/services/http'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
-  const loading = ref(true)
+  const loading = ref(false)
+  const initialized = ref(false)
 
   async function fetchMe() {
+    if (initialized.value) return
+    loading.value = true
     try {
       const { data } = await http.get('/auth/me')
       user.value = data
@@ -14,12 +17,14 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null
     } finally {
       loading.value = false
+      initialized.value = true
     }
   }
 
   async function login(email, password) {
     const { data } = await http.post('/auth/login', { email, password })
     user.value = data
+    initialized.value = true
   }
 
   async function logout() {
@@ -27,5 +32,5 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
   }
 
-  return { user, loading, fetchMe, login, logout }
+  return { user, loading, initialized, fetchMe, login, logout }
 })

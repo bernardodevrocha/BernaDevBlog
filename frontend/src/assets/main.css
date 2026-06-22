@@ -1,15 +1,32 @@
 /* ── Design Tokens ─────────────────────────────────────────────────── */
 :root {
-  --color-bg: #0f1117;
-  --color-surface: #161b27;
-  --color-surface-raised: #1e2436;
-  --color-border: #252d3d;
-  --color-text: #e2e8f0;
-  --color-text-muted: #64748b;
-  --color-text-subtle: #475569;
-  --color-accent: #6366f1;
-  --color-accent-hover: #818cf8;
+  /* Backgrounds — neutral charcoal, sem tom azul */
+  --color-bg: #0f1012;
+  --color-surface: #16181a;
+  --color-surface-raised: #1e2022;
+  --color-border: #2e3033;
+
+  /* Text */
+  --color-text: #e2e4e7;
+  --color-text-muted: #6b7280;
+  --color-text-subtle: #4b5563;
+
+  /* Accent — cinza slate profissional */
+  --color-accent: #6b7280;
+  --color-accent-hover: #9ca3af;
+
+  /* Accent transparente (para backgrounds/bordas sutis) */
+  --color-accent-muted: rgba(107, 114, 128, 0.1);
+  --color-accent-muted-hover: rgba(107, 114, 128, 0.18);
+  --color-accent-muted-border: rgba(107, 114, 128, 0.24);
+
   --color-danger: #ef4444;
+  --color-header-bg: rgba(15, 16, 18, 0.88);
+
+  /* Syntax — tons de cinza diferenciados para legibilidade */
+  --color-syntax-kw: #c5ccd6;
+  --color-syntax-fn: #9ca3af;
+  --color-syntax-str: #a0adb8;
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
@@ -20,6 +37,27 @@
 
   --container-max: 860px;
   --container-wide: 1100px;
+}
+
+/* ── Light theme ───────────────────────────────────────────────────── */
+[data-theme="light"] {
+  --color-bg: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-surface-raised: #eef0f2;
+  --color-border: #d1d5db;
+  --color-text: #111318;
+  --color-text-muted: #4b5563;
+  --color-text-subtle: #9ca3af;
+  --color-accent: #4b5563;
+  --color-accent-hover: #374151;
+  --color-accent-muted: rgba(75, 85, 99, 0.08);
+  --color-accent-muted-hover: rgba(75, 85, 99, 0.15);
+  --color-accent-muted-border: rgba(75, 85, 99, 0.22);
+  --color-danger: #dc2626;
+  --color-header-bg: rgba(244, 245, 247, 0.92);
+  --color-syntax-kw: #1a202c;
+  --color-syntax-fn: #374151;
+  --color-syntax-str: #4b5563;
 }
 
 /* ── Reset ─────────────────────────────────────────────────────────── */
@@ -124,8 +162,8 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-flex;
   align-items: center;
   padding: 0.2rem 0.6rem;
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  background: var(--color-accent-muted);
+  border: 1px solid var(--color-accent-muted-border);
   color: var(--color-accent-hover);
   border-radius: 999px;
   font-size: 0.75rem;
@@ -135,7 +173,7 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
 }
 
-.tag:hover { background: rgba(99, 102, 241, 0.2); }
+.tag:hover { background: var(--color-accent-muted-hover); }
 .tag-active { background: var(--color-accent) !important; color: #fff !important; border-color: var(--color-accent) !important; }
 
 .post-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
@@ -195,9 +233,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .code-line { display: block; color: var(--color-text-muted); }
-.kw { color: #c792ea; }
-.fn { color: #82aaff; }
-.str { color: #c3e88d; }
+.kw { color: var(--color-syntax-kw); }
+.fn { color: var(--color-syntax-fn); }
+.str { color: var(--color-syntax-str); }
 
 /* ── About ─────────────────────────────────────────────────────────── */
 .section-title { font-size: 1.5rem; margin-bottom: 2rem; }
@@ -376,7 +414,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--color-border);
   border-radius: 4px;
   padding: 0.15em 0.4em;
-  color: #c3e88d;
+  color: var(--color-syntax-str);
 }
 
 .prose pre {
@@ -826,9 +864,9 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--color-accent);
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: var(--color-accent-hover);
+  background: var(--color-accent-muted);
+  border: 1px solid var(--color-accent-muted-border);
   border-radius: 6px;
   padding: 0.25rem 0.6rem;
   flex-shrink: 0;
@@ -894,7 +932,7 @@ h1, h2, h3, h4, h5, h6 {
 .perf-code code {
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  color: #c3e88d;
+  color: var(--color-syntax-str);
   white-space: pre-wrap;
   word-break: break-all;
 }
@@ -937,9 +975,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .fstatus-planned {
-  background: rgba(99, 102, 241, 0.12);
+  background: var(--color-accent-muted);
   color: var(--color-accent-hover);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  border: 1px solid var(--color-accent-muted-border);
 }
 
 .fstatus-idea {
@@ -958,6 +996,27 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.875rem;
   color: var(--color-text-muted);
   line-height: 1.7;
+}
+
+/* ── Teaser pills (home) ───────────────────────────────────────────── */
+.teaser-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.teaser-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.9rem;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
 }
 
 /* ── Responsive ────────────────────────────────────────────────────── */

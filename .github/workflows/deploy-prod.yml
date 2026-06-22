@@ -1,0 +1,141 @@
+name: Deploy → Production
+
+# Dispara somente em push direto na main
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1   # ← troque se usar outra região
+  ECR_PREFIX: portfolio    # ← prefixo dos repositórios no ECR
+
+jobs:
+  # ── 1. Build e push de todas as imagens no ECR ──────────────────────
+  build-and-push:
+    name: Build & Push Images
+    runs-on: ubuntu-latest
+
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tag }}
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # Tag da imagem = primeiros 7 caracteres do SHA do commit
+      # Ex: main@abc1234 → rastreável, rollbackável
+      - name: Gera tag da imagem
+        id: meta
+        run: echo "tag=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Configura credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Login no ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ── Gateway ──────────────────────────────────────────────────────
+      - name: Build & Push — gateway
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG:      ${{ steps.meta.outputs.tag }}
+        run: |
+          docker build -t $REGISTRY/$ECR_PREFIX/gateway:$TAG \
+                       -t $REGISTRY/$ECR_PREFIX/gateway:latest \
+                       ./services/gateway
+          docker push $REGISTRY/$ECR_PREFIX/gateway:$TAG
+          docker push $REGISTRY/$ECR_PREFIX/gateway:latest
+
+      # ── Auth Service ─────────────────────────────────────────────────
+      - name: Build & Push — auth-service
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG:      ${{ steps.meta.outputs.tag }}
+        run: |
+          docker build -t $REGISTRY/$ECR_PREFIX/auth-service:$TAG \
+                       -t $REGISTRY/$ECR_PREFIX/auth-service:latest \
+                       ./services/auth-service
+          docker push $REGISTRY/$ECR_PREFIX/auth-service:$TAG
+          docker push $REGISTRY/$ECR_PREFIX/auth-service:latest
+
+      # ── Blog Service ─────────────────────────────────────────────────
+      - name: Build & Push — blog-service
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG:      ${{ steps.meta.outputs.tag }}
+        run: |
+          docker build -t $REGISTRY/$ECR_PREFIX/blog-service:$TAG \
+                       -t $REGISTRY/$ECR_PREFIX/blog-service:latest \
+                       ./services/blog-service
+          docker push $REGISTRY/$ECR_PREFIX/blog-service:$TAG
+          docker push $REGISTRY/$ECR_PREFIX/blog-service:latest
+
+      # ── Frontend ─────────────────────────────────────────────────────
+      - name: Build & Push — frontend
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG:      ${{ steps.meta.outputs.tag }}
+        run: |
+          docker build -t $REGISTRY/$ECR_PREFIX/frontend:$TAG \
+                       -t $REGISTRY/$ECR_PREFIX/frontend:latest \
+                       ./frontend
+          docker push $REGISTRY/$ECR_PREFIX/frontend:$TAG
+          docker push $REGISTRY/$ECR_PREFIX/frontend:latest
+
+  # ── 2. Deploy no ECS ────────────────────────────────────────────────
+  # Este job fica desativado até você configurar o ECS.
+  # Quando estiver pronto: remova o `if: false` e preencha os
+  # nomes dos clusters/serviços abaixo.
+  deploy-ecs:
+    name: Deploy ECS
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: false   # ← REMOVA esta linha quando o ECS estiver configurado
+
+    steps:
+      - name: Configura credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Deploy gateway no ECS
+        run: |
+          aws ecs update-service \
+            --cluster portfolio-prod \
+            --service gateway \
+            --force-new-deployment
+
+      - name: Deploy auth-service no ECS
+        run: |
+          aws ecs update-service \
+            --cluster portfolio-prod \
+            --service auth-service \
+            --force-new-deployment
+
+      - name: Deploy blog-service no ECS
+        run: |
+          aws ecs update-service \
+            --cluster portfolio-prod \
+            --service blog-service \
+            --force-new-deployment
+
+      - name: Deploy frontend no ECS
+        run: |
+          aws ecs update-service \
+            --cluster portfolio-prod \
+            --service frontend \
+            --force-new-deployment
+
+      - name: Aguarda estabilização dos serviços
+        run: |
+          aws ecs wait services-stable \
+            --cluster portfolio-prod \
+            --services gateway auth-service blog-service frontend

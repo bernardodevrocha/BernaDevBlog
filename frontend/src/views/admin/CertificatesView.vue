@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <section class="container section-sm">
     <div class="admin-header">
       <div>
         <h1 class="page-title">Certificados</h1>
@@ -105,7 +105,7 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -233,9 +233,9 @@ onMounted(() => store.fetchCertificates())
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--color-accent);
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: var(--color-accent-hover);
+  background: var(--color-accent-muted);
+  border: 1px solid var(--color-accent-muted-border);
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
 }
