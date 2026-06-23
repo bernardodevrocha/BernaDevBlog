@@ -20,6 +20,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         type = "metric"
         properties = {
           title  = "ALB - Request Count e Erros 5xx"
+          region = var.aws_region
           period = 60
           stat   = "Sum"
           metrics = [
@@ -32,6 +33,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         type = "metric"
         properties = {
           title  = "ALB - Latencia P99"
+          region = var.aws_region
           period = 60
           stat   = "p99"
           metrics = [
@@ -43,6 +45,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         type = "metric"
         properties = {
           title  = "ECS - CPU por Servico"
+          region = var.aws_region
           period = 60
           stat   = "Average"
           metrics = [
@@ -56,6 +59,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         type = "metric"
         properties = {
           title  = "ECS - Task Count por Servico"
+          region = var.aws_region
           period = 60
           stat   = "Average"
           metrics = [

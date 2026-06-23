@@ -12,19 +12,14 @@ terraform {
     }
   }
 
-  # State remoto: previne conflitos em apply paralelos e mantém histórico
-  # Crie o bucket e a tabela antes do primeiro `terraform init`:
-  #   aws s3 mb s3://portfolio-terraform-state-prod --region us-east-1
-  #   aws dynamodb create-table --table-name portfolio-terraform-locks \
-  #     --attribute-definitions AttributeName=LockID,AttributeType=S \
-  #     --key-schema AttributeName=LockID,KeyType=HASH \
-  #     --billing-mode PAY_PER_REQUEST --region us-east-1
+  # State remoto: mantém histórico e permite rodar terraform de qualquer máquina.
+  # Crie o bucket antes do primeiro `terraform init`:
+  #   aws s3 mb s3://personalblogprod --region us-east-1
   backend "s3" {
-    bucket         = "portfolio-terraform-state-prod"
-    key            = "portfolio/prod/terraform.tfstate"
-    region         = "us-east-1"
-    encrypt        = true
-    dynamodb_table = "portfolio-terraform-locks"
+    bucket  = "personalblogprod"
+    key     = "portfolio/prod/terraform.tfstate"
+    region  = "us-east-1"
+    encrypt = true
   }
 }
 

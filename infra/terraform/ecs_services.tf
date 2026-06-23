@@ -61,6 +61,11 @@ resource "aws_ecs_service" "auth" {
     assign_public_ip = false
   }
 
+  # Registra cada task no Cloud Map para que o gateway resolva auth-service.bernadevblog.local
+  service_registries {
+    registry_arn = aws_service_discovery_service.auth.arn
+  }
+
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
 
@@ -91,6 +96,11 @@ resource "aws_ecs_service" "blog" {
     subnets          = aws_subnet.private[*].id
     security_groups  = [aws_security_group.ecs_tasks.id]
     assign_public_ip = false
+  }
+
+  # Registra cada task no Cloud Map para que o gateway resolva blog-service.bernadevblog.local
+  service_registries {
+    registry_arn = aws_service_discovery_service.blog.arn
   }
 
   deployment_minimum_healthy_percent = 100

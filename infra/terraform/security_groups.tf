@@ -14,7 +14,7 @@ resource "aws_security_group" "alb" {
   }
 
   ingress {
-    description = "HTTP — redireciona para HTTPS no listener"
+    description = "HTTP - redireciona para HTTPS no listener"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -40,7 +40,7 @@ resource "aws_security_group" "ecs_tasks" {
 
   # Gateway: recebe do ALB
   ingress {
-    description     = "ALB → Gateway (8000)"
+    description     = "ALB para Gateway (8000)"
     from_port       = 8000
     to_port         = 8000
     protocol        = "tcp"
@@ -49,7 +49,7 @@ resource "aws_security_group" "ecs_tasks" {
 
   # Frontend: recebe do ALB
   ingress {
-    description     = "ALB → Frontend (80)"
+    description     = "ALB para Frontend (80)"
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
