@@ -193,7 +193,6 @@ Em desenvolvimento (Docker Compose), os nomes dos containers são usados diretam
 git clone https://github.com/bernardodevrocha/BernaDevBlog.git
 cd BernaDevBlog
 
-cp .env.example .env
 # Edite .env com seus valores locais
 ```
 
