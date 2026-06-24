@@ -6,8 +6,7 @@ resource "aws_lb" "main" {
   security_groups    = [aws_security_group.alb.id]
   subnets            = aws_subnet.public[*].id
 
-  # Proteção contra delete acidental em produção
-  enable_deletion_protection = true
+  enable_deletion_protection = false
 
   # Logs de acesso do ALB no S3 (útil para auditoria e debugging de latência)
   access_logs {
@@ -20,7 +19,7 @@ resource "aws_lb" "main" {
 # ── S3 Bucket para logs do ALB ────────────────────────────────────────
 resource "aws_s3_bucket" "alb_logs" {
   bucket        = "${var.project_name}-alb-logs-${data.aws_caller_identity.current.account_id}"
-  force_destroy = false
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "alb_logs" {

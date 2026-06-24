@@ -1,0 +1,25 @@
+# Copie este arquivo para terraform.tfvars e preencha os valores reais.
+# terraform.tfvars está no .gitignore — NUNCA comite o arquivo com valores reais.
+
+project_name = "your-project-name"
+environment  = "prod"
+aws_region   = "us-east-1"
+
+# Domínio e certificado SSL (emita via ACM antes do primeiro apply)
+domain_name         = "yourdomain.com"
+acm_certificate_arn = "arn:aws:acm:us-east-1:YOUR_ACCOUNT_ID:certificate/CERTIFICATE_ID"
+
+# Banco de dados
+db_instance_class = "db.t4g.micro"
+db_username       = "portfolio"
+
+# App
+cors_origins       = "https://yourdomain.com"
+admin_email        = "your@email.com"
+admin_name         = "Your Name"
+jwt_algorithm      = "HS256"
+jwt_expire_minutes = 180
+
+# GitHub Actions OIDC (configure como secret no repositório: AWS_ROLE_ARN)
+# arn:aws:iam::YOUR_ACCOUNT_ID:role/YOUR_ROLE_NAME
+github_repo = "githubuser/repo-name"

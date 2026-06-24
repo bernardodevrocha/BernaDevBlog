@@ -6,7 +6,8 @@ resource "aws_ecr_repository" "services" {
   for_each = toset(local.services)
 
   name                 = "${var.project_name}/${each.key}"
-  image_tag_mutability = "MUTABLE" # permite reutilizar a tag :latest
+  image_tag_mutability = "MUTABLE"
+  force_delete         = true
 
   # Scan automático em todo push — detecta CVEs antes de qualquer deploy
   image_scanning_configuration {

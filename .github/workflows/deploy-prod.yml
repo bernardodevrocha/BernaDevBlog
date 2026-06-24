@@ -6,8 +6,8 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_PREFIX: portfolio
-  ECS_CLUSTER: portfolio-prod
+  ECR_PREFIX: bernadevblog
+  ECS_CLUSTER: bernadevblog-prod
 
 # Garante que apenas um deploy rode por vez.
 # cancel-in-progress: false — espera o deploy atual terminar antes de iniciar o próximo.
@@ -122,7 +122,7 @@ jobs:
       - name: Configura credenciais AWS via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/portfolio-github-actions-role
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login no ECR
@@ -192,16 +192,16 @@ jobs:
         service:
           - name: gateway
             ecs-service: gateway
-            task-family: portfolio-gateway
+            task-family: bernadevblog-gateway
           - name: auth-service
             ecs-service: auth-service
-            task-family: portfolio-auth-service
+            task-family: bernadevblog-auth-service
           - name: blog-service
             ecs-service: blog-service
-            task-family: portfolio-blog-service
+            task-family: bernadevblog-blog-service
           - name: frontend
             ecs-service: frontend
-            task-family: portfolio-frontend
+            task-family: bernadevblog-frontend
 
     steps:
       - uses: actions/checkout@v4
@@ -209,7 +209,7 @@ jobs:
       - name: Configura credenciais AWS via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/portfolio-github-actions-role
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login no ECR
@@ -278,4 +278,4 @@ jobs:
         run: |
           echo "::error::Deploy de ${{ matrix.service.name }} falhou."
           echo "O deployment circuit breaker do ECS esta executando rollback automatico."
-          echo "Verifique os logs em: CloudWatch > /ecs/portfolio/${{ matrix.service.name }}"
+          echo "Verifique os logs em: CloudWatch > /ecs/bernadevblog/${{ matrix.service.name }}"

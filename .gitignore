@@ -13,8 +13,6 @@ venv/
 .mypy_cache/
 .ruff_cache/
 .claude
-
-.env.example
 # ── Raiz legada (monolito substituído pelos microserviços) ─────────────
 /requirements.txt
 /Dockerfile

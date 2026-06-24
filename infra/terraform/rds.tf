@@ -42,10 +42,9 @@ resource "aws_db_instance" "main" {
   backup_window           = "03:00-04:00"
   maintenance_window      = "Mon:04:00-Mon:05:00"
 
-  # Protege contra delete acidental via terraform destroy
-  deletion_protection = true
-  skip_final_snapshot = false
-  final_snapshot_identifier = "${var.project_name}-final-snapshot"
+  deletion_protection = false
+  skip_final_snapshot = true
+  final_snapshot_identifier = "${var.project_name}-final-snapshot-unused"
 
   # Performance Insights: visibilidade de queries lentas sem agente externo
   performance_insights_enabled          = true
